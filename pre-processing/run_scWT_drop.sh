@@ -7,14 +7,14 @@ STAR --runThreadN 16 --runMode genomeGenerate --genomeDir MM10_STAR --genomeFast
 
 # Filter and align
 fastp --detect_adapter_for_pe -i scWT_02_R1.fastq.gz -I scWT_02_R2.fastq.gz -o scWT_02_R1.filter.fastq.gz -O scWT_02_R2.filter.fastq.gz
-python3 BCFilter.py
+python3 sub-script/BCFilter.py
 STAR --runThreadN 16 --genomeDir HS38_STAR --readFilesIn scWT_02_R1.filter.fastq.gz scWT_02_R2.filter.fastq.gz scWT_02_I2.filter.fastq.gz --soloType CB_samTagOut --soloCBwhitelist 737K-cratac-v1_rev.txt --soloCBmatchWLtype 1MM --outFileNamePrefix scWT_02_hs --outSAMtype BAM SortedByCoordinate --readFilesCommand zcat --outSAMattributes CR CB XS --outSAMstrandField intronMotif --soloBarcodeReadLength 0
-java -jar ~/tools/bin/picard.jar MarkDuplicates I=scWT_02_hsAligned.sortedByCoord.out.bam O=scWT_02_hs.bam CREATE_INDEX=false REMOVE_DUPLICATES=false M=scWT_02_hs.dup.txt BARCODE_TAG=CB
+java -jar picard.jar MarkDuplicates I=scWT_02_hsAligned.sortedByCoord.out.bam O=scWT_02_hs.bam CREATE_INDEX=false REMOVE_DUPLICATES=false M=scWT_02_hs.dup.txt BARCODE_TAG=CB
 rm scWT_02_hsAligned.sortedByCoord.out.bam
 samtools index scWT_02_hs.bam
 qualimap rnaseq -outdir scWT_02_hs_qc -bam scWT_02_hs.bam -gtf gencode.v40.annotation.gtf --java-mem-size=16G
 STAR --runThreadN 16 --genomeDir MM10_STAR --readFilesIn scWT_02_R1.filter.fastq.gz scWT_02_R2.filter.fastq.gz scWT_02_I2.filter.fastq.gz --soloType CB_samTagOut --soloCBwhitelist 737K-cratac-v1_rev.txt --soloCBmatchWLtype 1MM --outFileNamePrefix scWT_02_mm --outSAMtype BAM SortedByCoordinate --readFilesCommand zcat --outSAMattributes CR CB XS --outSAMstrandField intronMotif --soloBarcodeReadLength 0
-java -jar ~/tools/bin/picard.jar MarkDuplicates I=scWT_02_mmAligned.sortedByCoord.out.bam O=scWT_02_mm.bam CREATE_INDEX=false REMOVE_DUPLICATES=false M=scWT_02_mm.dup.txt BARCODE_TAG=CB
+java -jar picard.jar MarkDuplicates I=scWT_02_mmAligned.sortedByCoord.out.bam O=scWT_02_mm.bam CREATE_INDEX=false REMOVE_DUPLICATES=false M=scWT_02_mm.dup.txt BARCODE_TAG=CB
 rm scWT_02_mmAligned.sortedByCoord.out.bam
 samtools index scWT_02_mm.bam
 qualimap rnaseq -outdir scWT_02_mm_qc -bam scWT_02_mm.bam -gtf gencode.vM29.annotation.gtf --java-mem-size=16G
@@ -25,17 +25,17 @@ samtools index SRR19619979.bam
 qualimap rnaseq -outdir SRR19619979_qc -bam SRR19619979.bam -gtf ~/library/gencode.v40.annotation.gtf --java-mem-size=16G
 
 # Annotate and count
-python3 calcHybrid.py
-python3 calcReads.py
-Rscript calcCells.R
-Rscript calcCells_other.R
+python3 sub-script/calcHybrid.py
+python3 sub-script/calcReads.py
+Rscript sub-script/calcCells.R
+Rscript sub-script/calcCells_other.R
 
 # Calculate coverage and transcripts
-python3 calcCov.py
+python3 sub-script/calcCov.py
 stringtie scWT_02_hs_filter.bam -o scWT_02_hs_filter.gtf -p 16 -G gencode.v40.annotation.gtf -l HSS
 stringtie SRR19619979.bam -o 293T_bulk.gtf -p 16 -G gencode.v40.annotation.gtf -l HSB
-Rscript calcTrans.R
-python3 calcTrans.py
+Rscript sub-script/calcTrans.R
+python3 sub-script/calcTrans.py
 
 # Collect the results
 cp scWT_02.rds ../
