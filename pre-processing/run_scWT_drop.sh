@@ -5,7 +5,7 @@ cd data_drop
 STAR --runThreadN 16 --runMode genomeGenerate --genomeDir HS38_STAR --genomeFastaFiles GRCh38.p13.genome.fa --sjdbGTFfile gencode.v40.annotation.gtf --sjdbOverhang 149
 STAR --runThreadN 16 --runMode genomeGenerate --genomeDir MM10_STAR --genomeFastaFiles GRCm39.genome.fa --sjdbGTFfile gencode.vM29.annotation.gtf --sjdbOverhang 149
 
-# Filter and align
+# QC, Filter and align
 fastp --detect_adapter_for_pe -i scWT_02_R1.fastq.gz -I scWT_02_R2.fastq.gz -o scWT_02_R1.filter.fastq.gz -O scWT_02_R2.filter.fastq.gz
 python3 sub-script/BCFilter.py
 STAR --runThreadN 16 --genomeDir HS38_STAR --readFilesIn scWT_02_R1.filter.fastq.gz scWT_02_R2.filter.fastq.gz scWT_02_I2.filter.fastq.gz --soloType CB_samTagOut --soloCBwhitelist 737K-cratac-v1_rev.txt --soloCBmatchWLtype 1MM --outFileNamePrefix scWT_02_hs --outSAMtype BAM SortedByCoordinate --readFilesCommand zcat --outSAMattributes CR CB XS --outSAMstrandField intronMotif --soloBarcodeReadLength 0

@@ -1,6 +1,17 @@
 # scWT
 The scripts for scWT analysis:
 
+First run the shell script in pre-processing to handle the raw data.
+
+Then scWT_fig_xx.R could be uesd for figure generating.
+
+
+scWT_fig_01.R is used for fig1 generating.
+
+scWT_fig_02.R is used for fig2 generating.
+
+scWT_fig_03.R is used for fig3 generating.
+
 ```bash
 ├── pre-processing
 │   ├── run_scWT_bulk.sh
