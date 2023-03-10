@@ -7,7 +7,7 @@ The scripts for scWT analysis:
 │   ├── run_scWT_drop.sh
 │   └── sub-script
 │       ├── BCFilter.py
-│       ├── calcCells_other.txt
+│       ├── calcCells_other.R
 │       ├── calcCells.R
 │       ├── calcCov.py
 │       ├── calcHybrid.py
