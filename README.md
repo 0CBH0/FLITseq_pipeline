@@ -2,19 +2,19 @@
 The scripts for scWT analysis:
 
 ```bash
-©À©¤©¤ pre-processing
-©¦   ©À©¤©¤ run_scWT_bulk.sh
-©¦   ©À©¤©¤ run_scWT_drop.sh
-©¦   ©¸©¤©¤ sub-script
-©¦       ©À©¤©¤ BCFilter.py
-©¦       ©À©¤©¤ calcCells_other.txt
-©¦       ©À©¤©¤ calcCells.R
-©¦       ©À©¤©¤ calcCov.py
-©¦       ©À©¤©¤ calcHybrid.py
-©¦       ©À©¤©¤ calcReads.py
-©¦       ©À©¤©¤ calcTrans.py
-©¦       ©¸©¤©¤ calcTrans.R
-©À©¤©¤ scWT_fig_01.R
-©À©¤©¤ scWT_fig_02.R
-©¸©¤©¤ scWT_fig_03.R
+â”œâ”€â”€ pre-processing
+â”‚   â”œâ”€â”€ run_scWT_bulk.sh
+â”‚   â”œâ”€â”€ run_scWT_drop.sh
+â”‚   â””â”€â”€ sub-script
+â”‚       â”œâ”€â”€ BCFilter.py
+â”‚       â”œâ”€â”€ calcCells_other.txt
+â”‚       â”œâ”€â”€ calcCells.R
+â”‚       â”œâ”€â”€ calcCov.py
+â”‚       â”œâ”€â”€ calcHybrid.py
+â”‚       â”œâ”€â”€ calcReads.py
+â”‚       â”œâ”€â”€ calcTrans.py
+â”‚       â””â”€â”€ calcTrans.R
+â”œâ”€â”€ scWT_fig_01.R
+â”œâ”€â”€ scWT_fig_02.R
+â””â”€â”€ scWT_fig_03.R
 ```
