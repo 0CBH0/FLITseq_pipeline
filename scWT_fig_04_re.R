@@ -271,11 +271,6 @@ pc <- wrap_elements(wrap_plots(pis, ncol=1, heights=rep(c(20, 20, 1), length(gen
 ggsave(plot=pc, width=8.5, height=5, dpi=300, "scFLIT_Fig04_C.png", limitsize=F)
 ggsave(plot=pc, width=8.5, height=5, dpi=300, "scFLIT_Fig04_C.pdf", limitsize=F)
 
-
-
-
-
-#######################################################################
 rec <- read.delim("./293T/juncs_info_count.txt")
 rec <- rec[which(rec$Gene == "ENSG00000166165.14"),]
 rec$SC <- log2(rec$SC)

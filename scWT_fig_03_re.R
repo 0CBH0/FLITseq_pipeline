@@ -26,39 +26,39 @@ text_size <- 6*font_scale
 title_size <- 7.5*font_scale
 tag_thm <- theme(plot.tag=element_text(size=10*font_scale, colour="black", face="bold"), plot.margin=margin())
 
-#fileList <- list.files(path="data", pattern="*.h5$")
-#sceList <- lapply(fileList, function(x){CreateSeuratObject(Read10X_h5(paste0("data/", x)), project=gsub("_count.h5", "", x))})
-#sce <- merge(sceList[1][[1]], y=sceList[-1], add.cell.ids=gsub("_count.h5", "", fileList), project="scWT")
-#sce[["cell.sample"]] <- Idents(sce)
-#sce <- subset(sce, features=rownames(sce)[-match("ENSMUSG00000022602.15", rownames(sce))])
-#rs <- rowSums(sce)
-#sce <- sce[which(rs > 10),]
-#gtf_info <- read.delim("scWT_feature_info.tsv")
-#gtf_info <- gtf_info[match(intersect(rownames(sce), gtf_info$ID), gtf_info$ID),]
-#sce <- subset(sce, features=rownames(sce)[-match(gtf_info$ID[which(gtf_info$Chr == "chrM")], rownames(sce))])
-#feature_info <- data.frame(Term=rownames(sce), Type=rep("MM", nrow(sce)))
-#feature_info$Type[grep("^ENSG.*", feature_info$Term)] <- "HS"
-#data_info <- data.frame(exon.h=colSums(sce[["RNA"]]@counts[feature_info$Term[which(feature_info$Type == "HS")],]), 
-#	exon.m=colSums(sce[["RNA"]]@counts[feature_info$Term[which(feature_info$Type == "MM")],]), 
-#	feature.h=colSums(sce[["RNA"]]@counts[feature_info$Term[which(feature_info$Type == "HS")],] > 0), 
-#	feature.m=colSums(sce[["RNA"]]@counts[feature_info$Term[which(feature_info$Type == "MM")],] > 0), 
-#	row.names=colnames(sce))
+fileList <- list.files(path="data", pattern="*.h5$")
+sceList <- lapply(fileList, function(x){CreateSeuratObject(Read10X_h5(paste0("data/", x)), project=gsub("_count.h5", "", x))})
+sce <- JoinLayers(merge(sceList[1][[1]], y=sceList[-1], add.cell.ids=gsub("_count.h5", "", fileList), project="scWT"))
+sce[["cell.sample"]] <- Idents(sce)
+sce <- subset(sce, features=rownames(sce)[-match("ENSMUSG00000022602.15", rownames(sce))])
+rs <- rowSums(sce[["RNA"]]$counts)
+sce <- sce[which(rs > 10),]
+gtf_info <- read.delim("scWT_feature_info.tsv")
+gtf_info <- gtf_info[match(intersect(rownames(sce), gtf_info$ID), gtf_info$ID),]
+sce <- subset(sce, features=rownames(sce)[-match(gtf_info$ID[which(gtf_info$Chr == "chrM")], rownames(sce))])
+feature_info <- data.frame(Term=rownames(sce), Type=rep("MM", nrow(sce)))
+feature_info$Type[grep("^ENSG.*", feature_info$Term)] <- "HS"
+data_info <- data.frame(exon.h=colSums(sce[["RNA"]]@counts[feature_info$Term[which(feature_info$Type == "HS")],]), 
+	exon.m=colSums(sce[["RNA"]]@counts[feature_info$Term[which(feature_info$Type == "MM")],]), 
+	feature.h=colSums(sce[["RNA"]]@counts[feature_info$Term[which(feature_info$Type == "HS")],] > 0), 
+	feature.m=colSums(sce[["RNA"]]@counts[feature_info$Term[which(feature_info$Type == "MM")],] > 0), 
+	row.names=colnames(sce))
 
-#data_info$group <- "Contamination"
-#data_info$count <- data_info$exon.h + data_info$exon.m
-#data_info$rate <- data_info$exon.h/(data_info$count+1)
-#data_info$group[which(data_info$exon.h > 1000 & data_info$rate > 0.75)] <- "HEK293T"
-#data_info$group[which(data_info$exon.m > 1000 & data_info$rate < 0.25)] <- "NIH/3T3"
-#data_info$group[which(data_info$exon.m < 1000 & data_info$exon.h < 1000)] <- "Empty"
-#data_info$group[which(data_info$exon.m > 15000 | data_info$exon.h > 20000)] <- "Doublet"
-#data_info$group[which(data_info$count > 25000)] <- "Doublet"
-#data_info$group[which(data_info$group == "Contamination" & data_info$count > 4000)] <- "Doublet"
-#hs_lim <- mean(data_info$exon.h[which(data_info$group == "Contamination")])
-#mm_lim <- mean(data_info$exon.m[which(data_info$group == "Contamination")])
-#data_info$group[which(data_info$group == "HEK293T" & data_info$exon.m > mm_lim)] <- "Contamination"
-#data_info$group[which(data_info$group == "NIH/3T3" & data_info$exon.h > hs_lim)] <- "Contamination"
-#sce[["cell.rate"]] <- data_info$rate[match(colnames(sce), rownames(data_info))]
-#write.csv(data_info, "scwt_info.csv")
+data_info$group <- "Contamination"
+data_info$count <- data_info$exon.h + data_info$exon.m
+data_info$rate <- data_info$exon.h/(data_info$count+1)
+data_info$group[which(data_info$exon.h > 1000 & data_info$rate > 0.75)] <- "HEK293T"
+data_info$group[which(data_info$exon.m > 1000 & data_info$rate < 0.25)] <- "NIH/3T3"
+data_info$group[which(data_info$exon.m < 1000 & data_info$exon.h < 1000)] <- "Empty"
+data_info$group[which(data_info$exon.m > 15000 | data_info$exon.h > 20000)] <- "Doublet"
+data_info$group[which(data_info$count > 25000)] <- "Doublet"
+data_info$group[which(data_info$group == "Contamination" & data_info$count > 4000)] <- "Doublet"
+hs_lim <- mean(data_info$exon.h[which(data_info$group == "Contamination")])
+mm_lim <- mean(data_info$exon.m[which(data_info$group == "Contamination")])
+data_info$group[which(data_info$group == "HEK293T" & data_info$exon.m > mm_lim)] <- "Contamination"
+data_info$group[which(data_info$group == "NIH/3T3" & data_info$exon.h > hs_lim)] <- "Contamination"
+sce[["cell.rate"]] <- data_info$rate[match(colnames(sce), rownames(data_info))]
+write.csv(data_info, "scwt_info.csv")
 
 data_info <- read.csv("scwt_info.csv", r=1, h=T)
 data_info$group <- factor(data_info$group, levels=c("HEK293T", "NIH/3T3", "Doublet", "Contamination", "Empty"))
@@ -95,14 +95,14 @@ pb <- wrap_elements(ggplot(data_info, aes(x=exon.h, y=exon.m, colour=group))+geo
 ggsave(plot=pb, width=4, height=3, dpi=300, "scFLIT_Fig03_B.png", limitsize=F)
 ggsave(plot=pb, width=4, height=3, dpi=300, "scFLIT_Fig03_B.pdf", limitsize=F)
 
-#sce <- subset(sce, cells=rownames(data_info)[which(data_info$group == "HEK293T" | data_info$group == "NIH/3T3")])
-#sce[["cell.type"]] <- data_info$group[match(colnames(sce), rownames(data_info))]
-#rs <- rowSums(sce)
-#sce <- sce[which(rs > 10),]
-#sce <- SCTransform(sce, method="glmGamPoi")
-#sce <- RunPCA(sce)
-#sce <- RunUMAP(sce, dims=1:10)
-#saveRDS(sce, "scwt_re.rds")
+sce <- subset(sce, cells=rownames(data_info)[which(data_info$group == "HEK293T" | data_info$group == "NIH/3T3")])
+sce[["cell.type"]] <- data_info$group[match(colnames(sce), rownames(data_info))]
+rs <- rowSums(sce[["RNA"]]$counts)
+sce <- sce[which(rs > 10),]
+sce <- SCTransform(sce, method="glmGamPoi")
+sce <- RunPCA(sce)
+sce <- RunUMAP(sce, dims=1:10)
+saveRDS(sce, "scwt_re.rds")
 sce <- readRDS("scwt_re.rds")
 res <- data.frame(sce@reductions[["umap"]]@cell.embeddings, rank=abs(sce$cell.rate-0.5), rate=sce$cell.rate)
 pc <- ggplot(res, aes(x=-UMAP_1, y=UMAP_2, colour=rate))+geom_point(size=0.1)+
@@ -162,18 +162,6 @@ pe <- wrap_elements(ggplot(res, aes(x=Type, y=Features, colour=Group, fill=Group
 ggsave(plot=pe, width=4, height=3, dpi=300, "scFLIT_Fig03_E.png", limitsize=F)
 ggsave(plot=pe, width=4, height=3, dpi=300, "scFLIT_Fig03_E.pdf", limitsize=F)
 
-#data_sub$depth <- "293T_M"
-#ll <- quantile(data_sub$counts[which(data_sub$group == "HEK293T")], 0.33)
-#lh <- quantile(data_sub$counts[which(data_sub$group == "HEK293T")], 0.67)
-#data_sub$depth[which(data_sub$group == "HEK293T" & data_sub$counts <= ll)] <- "293T_L"
-#data_sub$depth[which(data_sub$group == "HEK293T" & data_sub$counts >= lh)] <- "293T_H"
-#data_sub$depth[which(data_sub$group != "HEK293T")] <- "3T3_M"
-#ll <- quantile(data_sub$counts[which(data_sub$group != "HEK293T")], 0.33)
-#lh <- quantile(data_sub$counts[which(data_sub$group != "HEK293T")], 0.67)
-#data_sub$depth[which(data_sub$group != "HEK293T" & data_sub$counts <= ll)] <- "3T3_L"
-#data_sub$depth[which(data_sub$group != "HEK293T" & data_sub$counts >= lh)] <- "3T3_H"
-#data_sub$bc <- rownames(data_sub)
-#write.csv(data_sub, "cell_info_test.csv", row.names=F)
 data_sub$depth <- "HEK293T"
 data_sub$depth[which(data_sub$group == "NIH/3T3")] <- "NIH/3T3"
 data_sub$bc <- rownames(data_sub)
@@ -197,8 +185,6 @@ pd <- wrap_elements(ggplot(info, aes(x=pos, y=cov, color=Type))+geom_line(linewi
 	legend.key=element_blank(), legend.background=element_blank()))
 ggsave(plot=pd, width=5.5, height=3, dpi=300, "scFLIT_Fig03_D.png", limitsize=F)
 ggsave(plot=pd, width=5.5, height=3, dpi=300, "scFLIT_Fig03_D.pdf", limitsize=F)
-
-
 
 res <- data.frame(Features=data_sub$features[which(data_sub$group == "HEK293T")], Type="scFLIT", Group="HS")
 res <- rbind(res, data.frame(Features=data_sub$features[which(data_sub$group == "NIH/3T3")], Type="scFLIT", Group="MM"))
@@ -268,9 +254,5 @@ pe_b <- wrap_elements(ggplot(res_b, aes(x=Type, y=Features))+
 	legend.key=element_blank(), legend.background=element_blank()))
 ggsave(plot=pe_b, width=2.8, height=3, dpi=300, "scFLIT_Fig03_Eb.png", limitsize=F)
 ggsave(plot=pe_b, width=2.8, height=3, dpi=300, "scFLIT_Fig03_Eb.pdf", limitsize=F)
-
-
-
-
 
 
